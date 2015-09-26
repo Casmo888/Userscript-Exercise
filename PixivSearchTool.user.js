@@ -35,6 +35,7 @@ PST.ads = [
     '.ad',
     '.ads_area',
     '.ad-footer',
+    '.ads_anchor',
     '.ads_area_no_margin'
 ];
 
