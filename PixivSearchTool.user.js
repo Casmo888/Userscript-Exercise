@@ -8,7 +8,12 @@
 // @grant           none
 // ==/UserScript==
 'use strict';
-
+/////////////////////
+// User Customization 
+let UC_autostar = true;
+let UC_search_delay = 2000;
+let UC_following_style = 'color: #FF0000';
+//////////////////////////////////////////
 let PST = {};
 PST.loc = window.location;
 PST.objs = [];
@@ -240,7 +245,7 @@ function ParseSearchPage() {
         .then((page_pstobjs) => {
             for (let pstobj of page_pstobjs) {
                 if (PST.pageType !== 'member_illust' && pstobj.following) {
-                    pstobj.p_item.querySelector('.user').style.color = '#F00';
+                    pstobj.p_item.querySelector('.user').style = UC_following_style;
                 }
                 PST.objs.push(pstobj);
             }
@@ -249,6 +254,7 @@ function ParseSearchPage() {
         })
         .then((page_pstobjs) => {
             PstobjsAppendToDOM(page_pstobjs);
+            PST.DOMRoot.querySelector('#pst-process').innerHTML = PST.objs.length;
             if (PST.run) {
                 DisplayBySetting(page_pstobjs);
             }
@@ -270,6 +276,9 @@ function DelayFetch(delay) {
 
 function HTML() {
     return `<div id="PixivSearchTool">
+                <div class="set-raw process">
+                    <p>處理圖數: <span id="pst-process"></span></p>
+                </div>
                 <div class="set-raw keyWord">
                     <label for="pst-keyword">關鍵字</label>
                     <input type="text" id="pst-keyword">
@@ -368,7 +377,7 @@ function SetupDOMEvent() {
                 case 'new_illust':
                 case 'new_illust_r18':
                 case 'bookmark':
-                    DelayFetch(2000);
+                    DelayFetch(UC_search_delay);
                     break;
                 case 'member_illust':
                     if (PST.objParent) {
@@ -393,7 +402,7 @@ function init() {
     RemovePremium();
     SetPageType();
     ParseUrlQuery(PST.loc.search);
-    if(IsSupportPages()) {
+    if (IsSupportPages()) {
         SetupDOM();
         SetupDOMEvent();
     }
@@ -419,6 +428,11 @@ Promise.resolve(init())
 
                 if (PST.queryObj.has('illust_id')) {
                     //Image Page
+                    if (UC_autostar) {
+                        setTimeout(() => {
+                            pixiv.rating.apply(10)
+                        }, 500);
+                    }
                     PST.DOMRoot.querySelector('#pst-keyword').disabled = true;
                 } else {
                     //Image List
