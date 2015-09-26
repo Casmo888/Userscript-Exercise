@@ -227,8 +227,8 @@ function ParseSearchPage() {
 
                 let pstobj = {};
                 pstobj.p_item = p_item;
-                if(!p_item.querySelector('a')){
-                    return pstobj;  //Pixiv Error or Private Image
+                if (!p_item.querySelector('a')) {
+                    return pstobj; //Pixiv Error or Private Image
                 }
                 pstobj.url = p_item.querySelector('a').href;
                 pstobj.illust_id = pstobj.url.match(/.*illust_id=(\d*)/)[1];
@@ -265,7 +265,7 @@ function ParseSearchPage() {
 
 function DelayFetch(delay) {
     Promise.resolve(ParseSearchPage()).then((page_pstobjs) => {
-        if (page_pstobjs.length > 0) {
+        if (page_pstobjs.length > 0 && PST.run) {
             setTimeout(DelayFetch, delay);
         }
     })
@@ -287,8 +287,9 @@ function HTML() {
                     <label for="pst-bookmark-like">書籤數</label>
                     <input type="number" id="pst-bookmark-like" min="0" step="20" value="0">
                 </div>
-                <div class="set-raw submit">
-                    <div class="button">過濾</div>
+                <div class="set-raw buttons">
+                    <div class="button" id="pst-filter">過濾</div>
+                    <div class="button" id="pst-pause">暫停</div>
                 </div>
             </div>`;
 }
@@ -367,7 +368,8 @@ function SetupDOM() {
 }
 
 function SetupDOMEvent() {
-    PST.DOMRoot.querySelector('.button').addEventListener('click', (event) => {
+
+    var run_filter = function(event) {
         if (!PST.run) {
             PST.run = true;
 
@@ -390,6 +392,17 @@ function SetupDOMEvent() {
         }
         GetPSTSetting();
         DisplayBySetting(PST.objs);
+    }
+
+    PST.DOMRoot.querySelector('#pst-filter').addEventListener('click', run_filter);
+    PST.DOMRoot.querySelector('#pst-bookmark-like').addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            run_filter(event)
+        }
+    });
+
+    PST.DOMRoot.querySelector('#pst-pause').addEventListener('click', (event) => {
+        PST.run = false;
     });
 }
 
