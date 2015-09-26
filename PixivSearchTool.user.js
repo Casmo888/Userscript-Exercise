@@ -4,7 +4,7 @@
 // @namespace       FlandreDaisuki
 // @include         http://www.pixiv.net/*
 // @match           http://www.pixiv.net/*
-// @version         2015.09.26
+// @version         2015.09.27
 // @updateURL       https://github.com/FlandreDaisuki/Userscript-Exercise/raw/master/PixivSearchTool.user.js
 // @grant           none
 // ==/UserScript==
@@ -141,7 +141,6 @@ function GetImageSize(dom) {
     let img_size_element = dom.querySelector('ul.meta>li:nth-of-type(2)');
 
     if (img_size_element === null) {
-        console.warn('function GetImageSize select fail.');
         return [];
     } else {
         let str = img_size_element.innerHTML;
@@ -184,7 +183,6 @@ function GetPSTSetting() {
         bklike: bklike,
         keyword: keyword
     };
-    console.log('PST.setting', PST.setting);
 }
 /////////////////////
 // Async Functions //
@@ -214,7 +212,6 @@ function ParseSearchPage() {
     let with_cookies = {
         credentials: 'same-origin'
     };
-    console.log(`ParseSearchPage ${QueryObjToUrl()}`);
     return fetch(QueryObjToUrl(), with_cookies)
         .then((response) => {
             return response.text();
@@ -230,10 +227,12 @@ function ParseSearchPage() {
 
                 let pstobj = {};
                 pstobj.p_item = p_item;
+                if(!p_item.querySelector('a')){
+                    return pstobj;  //Pixiv Error or Private Image
+                }
                 pstobj.url = p_item.querySelector('a').href;
                 pstobj.illust_id = pstobj.url.match(/.*illust_id=(\d*)/)[1];
                 pstobj.bklike = GetBkLike(p_item);
-
                 return pstobj;
             }).filter((p_item) => {
                 return p_item.illust_id; //Pixiv Error
@@ -251,7 +250,6 @@ function ParseSearchPage() {
                 }
                 PST.objs.push(pstobj);
             }
-            console.log(`ParseSearchPage ${QueryObjToUrl()} done!`);
             return page_pstobjs;
         })
         .then((page_pstobjs) => {
@@ -423,7 +421,6 @@ Promise.resolve(init())
                 break;
             case 'member_illust':
                 PST.queryObj.set('type', 'all');
-
                 PST.objParentName = '._image-items';
 
                 PST.DOMRoot.querySelector('#pst-bookmark-like').disabled = true;
@@ -436,9 +433,6 @@ Promise.resolve(init())
                         }, 500);
                     }
                     PST.DOMRoot.querySelector('#pst-keyword').disabled = true;
-                } else {
-                    //Image List
-                    console.log(PST.objParent);
                 }
                 break;
             case 'new_illust':
