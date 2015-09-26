@@ -392,9 +392,11 @@ function init() {
     RemoveAds();
     RemovePremium();
     SetPageType();
-    SetupDOM();
-    SetupDOMEvent();
     ParseUrlQuery(PST.loc.search);
+    if(IsSupportPages()) {
+        SetupDOM();
+        SetupDOMEvent();
+    }
 };
 
 Promise.resolve(init())
