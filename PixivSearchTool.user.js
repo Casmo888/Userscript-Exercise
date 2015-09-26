@@ -23,6 +23,11 @@ PST.pageType = '';
 
 PST.queryObj = new Map().set('p', 1);
 
+PST.setting = {
+    bklike: 0,
+    keyword: ''
+};
+
 PST.supportPages = [
     'search',
     'bookmark',
@@ -179,10 +184,8 @@ function GetPSTSetting() {
     let dom = PST.DOMRoot;
     let bklike = dom.querySelector('#pst-bookmark-like').value | 0;
     let keyword = dom.querySelector('#pst-keyword').value;
-    PST.setting = {
-        bklike: bklike,
-        keyword: keyword
-    };
+    PST.setting.bklike = bklike;
+    PST.setting.keyword = keyword;
 }
 /////////////////////
 // Async Functions //
@@ -255,9 +258,7 @@ function ParseSearchPage() {
         .then((page_pstobjs) => {
             PstobjsAppendToDOM(page_pstobjs);
             PST.DOMRoot.querySelector('#pst-process').innerHTML = PST.objs.length;
-            if (PST.run) {
-                DisplayBySetting(page_pstobjs);
-            }
+            DisplayBySetting(page_pstobjs);
             PST.queryObj.set('p', PST.queryObj.get('p') + 1);
             return page_pstobjs;
         });
@@ -268,7 +269,7 @@ function DelayFetch(delay) {
         if (page_pstobjs.length > 0 && PST.run) {
             setTimeout(DelayFetch, delay);
         }
-    })
+    });
 }
 ///////////////////////
 // PST DOM Functions //
