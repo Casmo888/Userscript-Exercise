@@ -1,6 +1,6 @@
 #My Userscript Exercise
 
-These userscript are write for Firefox with GreaseMonkey.
+These userscripts are writing for Firefox with GreaseMonkey.
 
 To use these, you should:
 - Install [Firefox](https://www.mozilla.org/en-US/firefox/all/)
