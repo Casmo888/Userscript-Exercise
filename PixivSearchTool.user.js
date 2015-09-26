@@ -5,6 +5,7 @@
 // @include         http://www.pixiv.net/*
 // @match           http://www.pixiv.net/*
 // @version         2015.09.26
+// @updateURL       https://github.com/FlandreDaisuki/Userscript-Exercise/raw/master/PixivSearchTool.user.js
 // @grant           none
 // ==/UserScript==
 'use strict';
