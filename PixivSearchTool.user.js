@@ -4,7 +4,7 @@
 // @namespace       FlandreDaisuki
 // @include         http://www.pixiv.net/*
 // @match           http://www.pixiv.net/*
-// @version         2015.09.27
+// @version         2015.09.28
 // @updateURL       https://github.com/FlandreDaisuki/Userscript-Exercise/raw/master/PixivSearchTool.user.js
 // @grant           none
 // ==/UserScript==
@@ -264,10 +264,10 @@ function ParseSearchPage() {
         });
 }
 
-function DelayFetch(delay) {
+function DelayFetch() {
     Promise.resolve(ParseSearchPage()).then((page_pstobjs) => {
         if (page_pstobjs.length > 0 && PST.run && PST.queryObj.get('p') <= 1000) {
-            setTimeout(DelayFetch, delay);
+            setTimeout(DelayFetch, UC_search_delay);
         }
     });
 }
@@ -380,11 +380,11 @@ function SetupDOMEvent() {
                 case 'new_illust':
                 case 'new_illust_r18':
                 case 'bookmark':
-                    DelayFetch(UC_search_delay);
+                    DelayFetch();
                     break;
                 case 'member_illust':
                     if (PST.objParent) {
-                        DelayFetch(500);
+                        DelayFetch();
                     }
                     break;
                 default:
