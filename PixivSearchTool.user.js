@@ -177,7 +177,7 @@ function GetImageItems(dom) {
 }
 
 function GetBkLike(p_item) {
-    return (p_item.querySelector('.count-list')) ? (p_item.querySelector('.bookmark-count').childNodes.item(1).data | 0) : 0;
+    return (p_item.querySelector('.bookmark-count')) ? (p_item.querySelector('.bookmark-count').childNodes.item(1).data | 0) : 0;
 }
 
 function GetPSTSetting() {
