@@ -266,7 +266,7 @@ function ParseSearchPage() {
 
 function DelayFetch(delay) {
     Promise.resolve(ParseSearchPage()).then((page_pstobjs) => {
-        if (page_pstobjs.length > 0 && PST.run) {
+        if (page_pstobjs.length > 0 && PST.run && PST.queryObj.get('p') <= 1000) {
             setTimeout(DelayFetch, delay);
         }
     });
