@@ -127,7 +127,7 @@ function DisplayBySetting(pstobjs) {
         let pick = true;
 
         if (setting.keyword !== '') {
-            pick = pick && pstobj.tags.some(w => w === setting.keyword);
+            pick = pick && pstobj.tags.some(w => w.match(new RegExp(setting.keyword)));
         }
         pick = pick && (pstobj.bklike >= setting.bklike)
 
