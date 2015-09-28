@@ -25,7 +25,8 @@ PST.queryObj = new Map().set('p', 1);
 
 PST.setting = {
     bklike: 0,
-    keyword: ''
+    keyword: '',
+    rate: 0
 };
 
 PST.supportPages = [
@@ -129,7 +130,8 @@ function DisplayBySetting(pstobjs) {
         if (setting.keyword !== '') {
             pick = pick && pstobj.tags.some(w => w.match(new RegExp(setting.keyword)));
         }
-        pick = pick && (pstobj.bklike >= setting.bklike)
+        pick = pick && (pstobj.bklike >= setting.bklike);
+        pick = pick && (pstobj.rate >= setting.rate);
 
         if (pick) {
             pstobj.p_item.style.display = 'inline-block';
@@ -176,6 +178,10 @@ function GetImageItems(dom) {
     return Array.from(dom.querySelectorAll(`${PST.objParentName} li.image-item`));
 }
 
+function GetImageRate(dom) {
+    return dom.querySelector('dd.score-count').innerHTML | 0;
+}
+
 function GetBkLike(p_item) {
     return (p_item.querySelector('.bookmark-count')) ? (p_item.querySelector('.bookmark-count').childNodes.item(1).data | 0) : 0;
 }
@@ -184,8 +190,10 @@ function GetPSTSetting() {
     let dom = PST.DOMRoot;
     let bklike = dom.querySelector('#pst-bookmark-like').value | 0;
     let keyword = dom.querySelector('#pst-keyword').value;
+    let rate = dom.querySelector('#pst-rate').value | 0;
     PST.setting.bklike = bklike;
     PST.setting.keyword = keyword;
+    PST.setting.rate = rate;
 }
 /////////////////////
 // Async Functions //
@@ -206,6 +214,7 @@ function ParseImagePage(pstobj) {
             pstobj.size = GetImageSize(dom);
             pstobj.tags = GetImageTags(dom);
             pstobj.following = IsFollowing(dom);
+            pstobj.rate = GetImageRate(dom);
 
             return pstobj;
         })
@@ -284,8 +293,12 @@ function HTML() {
                     <label for="pst-keyword">關鍵字</label>
                     <input type="text" id="pst-keyword">
                 </div>
+                <div class="set-raw rateNum">
+                    <label for="pst-rate"><span class="rate-star">★</span>評分</label>
+                    <input type="number" id="pst-rate" min="0" step="1000" value="0">
+                </div>
                 <div class="set-raw likeNum">
-                    <label for="pst-bookmark-like">書籤數</label>
+                    <label for="pst-bookmark-like">★書籤</label>
                     <input type="number" id="pst-bookmark-like" min="0" step="20" value="0">
                 </div>
                 <div class="set-raw buttons">
@@ -311,6 +324,16 @@ function CSS() {
             #PixivSearchTool .set-raw {
                 margin: 3px 0px;
                 text-align: center;
+            }
+
+            #PixivSearchTool > .likeNum label {
+                color: #0069B1;
+                background-color: #CCEEFF;
+            }
+            
+            #PixivSearchTool .rate-star {
+                /*background-image: background-image: repeating-linear-gradient(-45deg, rgb(245, 182, 0) 50%, rgb(241, 131, 0));*/
+                color: #F18300;
             }
 
             #PixivSearchTool .imgPageNum {
@@ -447,6 +470,7 @@ Promise.resolve(init())
                         }, 500);
                     }
                     PST.DOMRoot.querySelector('#pst-keyword').disabled = true;
+                    PST.DOMRoot.querySelector('#pst-rate').disabled = true;
                 }
                 break;
             case 'new_illust':
