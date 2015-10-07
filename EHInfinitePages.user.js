@@ -3,7 +3,8 @@
 // @namespace   FlandreDaisuki
 // @include     http://exhentai.org/*
 // @include     http://g.e-hentai.org/*
-// @version     2015.09.23
+// @version     2015.10.07
+// @updateURL   https://github.com/FlandreDaisuki/Userscript-Exercise/raw/master/EHInfinitePages.user.js
 // @grant       none
 // ==/UserScript==
 'use strict';
@@ -30,7 +31,7 @@ let pageinfo = {};
 if (docPath === '/') {
     init();
 
-    document.addEventListener('wheel', (event) => {
+    document.addEventListener('scroll', (event) => {
         if (pageinfo.bottomMark.getBoundingClientRect().top < 1000 && !lock) {
             lockFetch();
         }
